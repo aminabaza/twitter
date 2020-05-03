@@ -19,7 +19,6 @@ CONSUMER_KEY = '7zYOyTBslGBjz95hyvrICv2di'
 CONSUMER_SECRET = 'LDLySUy9U6xY5uknnMZxMLlM6XDCfbsXHN7XqwwJHc4Vxs3T6I'
 my_auth = requests_oauthlib.OAuth1(CONSUMER_KEY, CONSUMER_SECRET,ACCESS_TOKEN,
 ACCESS_SECRET)
-
 def get_tweets():
  url = 'https://stream.twitter.com/1.1/statuses/filter.json'
  query_data = [('language', 'en'), ('locations', '-130,-20,100,50'),('track','#')]
@@ -27,17 +26,18 @@ def get_tweets():
  response = requests.get(query_url, auth=my_auth, stream=True)
  print(query_url, response)
  return response
+ 
 def send_tweets_to_spark(http_resp, tcp_connection):
  for line in http_resp.iter_lines():
- try:
- full_tweet = json.loads(line)
- tweet_text = full_tweet['text']
- print("Tweet Text: " + tweet_text)
- print ("------------------------------------------")
- tcp_connection.send(tweet_text + '\n')
- except:
- e = sys.exc_info()[0]
- print("Error: %s" % e)
+   try:
+     full_tweet = json.loads(line)
+     tweet_text = full_tweet['text']
+     print("Tweet Text: " + tweet_text)
+     print ("------------------------------------------")
+     tcp_connection.send(tweet_text + '\n')
+   except:
+     e = sys.exc_info()[0]
+     print("Error: %s" % e)
 
 TCP_IP = "localhost"
 TCP_PORT = 9009
